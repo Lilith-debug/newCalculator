@@ -1,0 +1,21 @@
+.calculator {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+}
+
+.display {
+    height: 64 px;
+    width: 192 px;
+    text-align: center;
+}
+
+button {
+    background-color:cornflowerblue;
+    height: 64px;
+    width: 64px;
+    border: 1px solid gainsboro;
+}
