@@ -1,6 +1,21 @@
+body {
+    background-color: #F2EBE9;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10%;
+}
+
 .calculator {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    background-color: #dbdffd;
+    border: 1px solid #242f9b;
 }
 
 .row {
@@ -8,14 +23,24 @@
 }
 
 .display {
-    height: 64 px;
-    width: 192 px;
-    text-align: center;
+    display: flex;
+    height: 64px;
+    width: 192px;
+    align-items: center;
+    box-sizing: border-box;
+    border: 1px solid #242f9b;;
+}
+
+#displayText {
+    flex: 1 1 auto;
+    color: #242f9b;
 }
 
 button {
-    background-color:cornflowerblue;
+    background-color: #9ba3eb;
     height: 64px;
     width: 64px;
-    border: 1px solid gainsboro;
+    border: 1px solid #242f9b;
+    box-sizing: border-box;
+    color: #242f9b;
 }
