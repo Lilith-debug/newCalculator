@@ -36,7 +36,8 @@ function storeNumber (newNumber) {
 }
 
 function storeOperator (newOperator) {
-    if (operation !== null) {
+    const operators = ["+", "-", "*", "/"]
+    if (operation[-1] in operators === false && (number.length != 0 || operation.length != 0)) {
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
@@ -117,12 +118,48 @@ division.addEventListener('click', () => {
 });
 
 const equals = document.querySelector("#equals");
-//equals.addEventListener('click', () => {
-//    if (a !== null & operator !== null & b !== null) {
-//        result = operate(a, operator, b);
-//        displayText.textContent = result;
-//    }
-//});
+equals.addEventListener('click', () => {
+    let a = null;
+    let b = null;
+    let operator = null;
+    let subOperation = [];
+    let subResult = null
+
+    if (operation.length > 1 && number.length !== 0) {
+        operation.push(Number(number.join("")));
+        number = [];
+        for (let i = 0; i <= operation.length; i += 3){
+            subOperation = operation.slice(0, 2)
+            a = subOperation[0];
+            operator = subOperation[1];
+            b = subOperation[2];
+            subResult = operate(a, operator,b);
+            operation.splice(0, 3);
+            operation.unshift(subResult);
+        }
+        result = subResult;
+        displayText.textContent = result;
+    } else if (operation.length > 2) {
+        for (let i = 0; i <= operation.length; i += 3){
+            subOperation = operation.slice(0, 2)
+            a = subOoperation[0];
+            operator = subOperation[1];
+            b = subOperation[2];
+            subResult = operate(a, operator,b);
+            operation.splice(0, 3);
+            operation.unshift(subResult);
+        }
+        result = subResult;
+        displayText.textContent = result;
+    }
+
+    console.log(a);
+    console.log(b);
+    console.log(operator);
+    console.log(result);
+
+
+});
 
 const point = document.querySelector("#point");
 
