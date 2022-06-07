@@ -35,62 +35,65 @@ function storeNumber (newNumber) {
     console.log(number);
 }
 
-//function storeOperator (newOperator) {
-//    if (operator === null) {
-//        operator = newOperator;
-//    }
-//}
+function storeOperator (newOperator) {
+    if (operation !== null) {
+        operation.push(Number(number.join("")));
+        operation.push(newOperator);
+        number = [];
+        console.log(operation);
+    }
+}
 
 const displayText = document.querySelector("#displayText");
 
 const one = document.querySelector("#one");
 one.addEventListener('click', () => {
-    storeNumber(1);
+    storeNumber("1");
 });
 
 const two = document.querySelector("#two");
 two.addEventListener('click', () => {
-    storeNumber(2);
+    storeNumber("2");
 });
 
 const three = document.querySelector("#three");
 three.addEventListener('click', () => {
-    storeNumber(3);
+    storeNumber("3");
 });
 
 const four = document.querySelector("#four");
 four.addEventListener('click', () => {
-    storeNumber(4);
+    storeNumber("4");
 });
 
 const five = document.querySelector("#five");
 five.addEventListener('click', () => {
-    storeNumber(5);
+    storeNumber("5");
 });
 
 const six = document.querySelector("#six");
 six.addEventListener('click', () => {
-    storeNumber(6);
+    storeNumber("6");
 });
 
 const seven = document.querySelector("#seven");
 seven.addEventListener('click', () => {
-    storeNumber(7);
+    storeNumber("7");
 });
 
 const eight = document.querySelector("#eight");
 eight.addEventListener('click', () => {
-    storeNumber(8);
+    storeNumber("8");
 });
 
 const nine = document.querySelector("#nine");
 nine.addEventListener('click', () => {
-    storeNumber(9);
+    storeNumber("9");
 });
 
 const zero = document.querySelector("#zero");
 zero.addEventListener('click', () => {
-    storeNumber(0);
+    storeNumber("0");
 });
 
 const sum = document.querySelector("#add");
