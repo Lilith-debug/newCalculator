@@ -202,6 +202,11 @@ point.addEventListener('click', () => {
     console.log(number);
 })
 
+const backspace = document.querySelector("#backspace");
+backspace.addEventListener('click', () => {
+    number.length > 0 ? number.pop() : operation.pop();
+});
+
 const clear = document.querySelector("#clear");
 clear.addEventListener('click', () => {
     operation = [];
