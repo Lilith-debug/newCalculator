@@ -31,28 +31,70 @@ let number = [];
 let result = null;
 
 function storeNumber(newNumber) {
+    if (result !== null) {
+        operation = [];
+        result = null;
+    }
     number.push(newNumber);
     console.log(number);
 }
 
 function storeOperator(newOperator) {
-    const operators = ["+", "-", "*", "/"]
-    if (operation[-1] in operators === false && (number.length != 0 || operation.length != 0)) {
+    if (result !== null) {
+        operation.push(newOperator);
+        result = null;
+    }
+    if (number.length !== 0 || operation.length !== 0 && operation[operation.length - 1] !==  "+" && operation[operation.length - 1] !==  "-" && operation[operation.length - 1] !==  "*" && operation[operation.length - 1] !==  "/" ) {
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
         console.log(operation);
+    } else if (operation[operation.length - 1] ===  "+" || operation[operation.length - 1] ===  "-" || operation[operation.length - 1] ===  "*" || operation[operation.length - 1] ===  "/" ) {
+        operation.pop();
+        operation.push(newOperator);
     }
 }
 
 function checkForMultDiv(operator) {
-    if (operator === "*") {
-        return true;
-    } else if (operator === "/") {
+    if (operator === "*" || operator === "/") {
         return true;
     } else {
         return false;
     }
+}
+
+function resolveOperation(operation) {
+    let a = null;
+    let b = null;
+    let operator = null;
+    let subResult = null;
+
+    const amountOfMultDiv = operation.filter(checkForMultDiv);
+    let n = 0
+    while (n < amountOfMultDiv.length) {
+        n++;
+        const operatorIndex = operation.findIndex(checkForMultDiv);
+        operator = operation[operatorIndex];
+        a = operation[operatorIndex - 1];
+        b = operation[operatorIndex + 1];
+        if (operator === "/" && b === 0) {
+            return "ERROR";
+        } else {
+        subResult = operate(a, operator, b);
+        operation.splice(operatorIndex - 1, 3, subResult);
+        }
+    }
+
+    if (operation.length > 1) {
+        for (let i = 0; i < operation.length; i++){
+            a = operation[0];
+            operator = operation[1];
+            b = operation[2];
+            subResult = operate(a, operator, b);
+            operation.splice(0, 3, subResult);
+        }
+    }
+    return Math.round(subResult * 100) / 100;
 }
 
 const displayText = document.querySelector("#displayText");
@@ -129,63 +171,26 @@ division.addEventListener('click', () => {
 
 const equals = document.querySelector("#equals");
 equals.addEventListener('click', () => {
-    let a = null;
-    let b = null;
-    let operator = null;
-    let subOperation = [];
-    let subResult = null;
-
     if (operation.length > 1 && number.length !== 0) {
         operation.push(Number(number.join("")));
         number = [];
         console.log(operation);
-        const amountOfMultDiv = operation.filter(checkForMultDiv);
-        let n = 0
-        while (n < amountOfMultDiv.length) {
-            n++;
-            console.log("ok")
-            const operatorIndex = operation.findIndex(checkForMultDiv);
-            console.log("index =" + operatorIndex);
-            operator = operation[operatorIndex];
-            console.log("mult operator =" + operator)
-            a = operation[operatorIndex - 1];
-            b = operation[operatorIndex + 1];
-            subResult = operate(a, operator, b);
-            console.log("(while)" + subResult);
-            operation.splice(operatorIndex - 1, 3, subResult);
-            console.log("(while)" + operation);
+        result = resolveOperation(operation);     
+    } else if (operation[operation.length - 1] ===  "+" || operation[operation.length - 1] ===  "-" || operation[operation.length - 1] ===  "*" || operation[operation.length - 1] ===  "/" ) {
+        operation.pop();
+        console.log(operation);
+        if (operation.length > 1) {
+        result = resolveOperation(operation);
+        } else {
+            result = operation;
         }
-        for (let i = 0; i < operation.length; i++){
-            subOperation = operation.slice(0, 3)
-            a = subOperation[0];
-            operator = subOperation[1];
-            b = subOperation[2];
-            console.log(a);
-            console.log(operator);
-            console.log(b);
-            subResult = operate(a, operator, b);
-            operation.splice(0, 3, subResult);
-        }
-        result = subResult;
-        displayText.textContent = result;
-        result = [];
-    } else if (operation.length > 2) {
-        for (let i = 0; i <= operation.length; i += 3){
-            subOperation = operation.slice(0, 2)
-            a = subOoperation[0];
-            operator = subOperation[1];
-            b = subOperation[2];
-            subResult = operate(a, operator,b);
-            operation.splice(0, 3);
-            operation.unshift(subResult);
-        }
-        result = subResult;
-        displayText.textContent = result;
+    } else {
+        result = Number(number.join(""));
     }
-
+    
+    displayText.textContent = result;
+    operation = [result];
     console.log(result);
-
-
 });
 
 const point = document.querySelector("#point");
