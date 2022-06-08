@@ -29,6 +29,7 @@ function operate(a, operator, b) {
 let operation = [];
 let number = [];
 let result = null;
+const operatorList = ["+", "-", "*", "/"]
 
 function storeNumber(newNumber) {
     if (result !== null) {
@@ -44,12 +45,12 @@ function storeOperator(newOperator) {
         operation.push(newOperator);
         result = null;
     }
-    if (number.length !== 0 || operation.length !== 0 && operation[operation.length - 1] !==  "+" && operation[operation.length - 1] !==  "-" && operation[operation.length - 1] !==  "*" && operation[operation.length - 1] !==  "/" ) {
+    if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
         console.log(operation);
-    } else if (operation[operation.length - 1] ===  "+" || operation[operation.length - 1] ===  "-" || operation[operation.length - 1] ===  "*" || operation[operation.length - 1] ===  "/" ) {
+    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
         operation.pop();
         operation.push(newOperator);
     }
@@ -194,6 +195,12 @@ equals.addEventListener('click', () => {
 });
 
 const point = document.querySelector("#point");
+point.addEventListener('click', () => {
+    if (number.indexOf('.') === -1) {
+        number.push(".");
+    }
+    console.log(number);
+})
 
 const clear = document.querySelector("#clear");
 clear.addEventListener('click', () => {
