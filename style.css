@@ -25,23 +25,30 @@ body {
 .display {
     display: flex;
     height: 64px;
-    width: 192px;
+    width: 256px;
     align-items: center;
     box-sizing: border-box;
     border: 1px solid #242f9b;;
 }
 
 #displayText {
+    font-size: large;
     flex: 1 1 auto;
     color: #242f9b;
     padding: 8px;
 }
 
 button {
+    font-size: large;
     background-color: #9ba3eb;
     height: 64px;
     width: 64px;
     border: 1px solid #242f9b;
     box-sizing: border-box;
     color: #242f9b;
+    font-weight: bolder;
+}
+
+#equals {
+    width: 128px;
 }
