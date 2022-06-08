@@ -14,7 +14,7 @@ function divide(a,b) {
     return a / b;
 }
 
-function operate (a, operator, b) {
+function operate(a, operator, b) {
     if (operator === "+") {
         return add(a,b);
     } else if (operator === "-") {
@@ -30,18 +30,28 @@ let operation = [];
 let number = [];
 let result = null;
 
-function storeNumber (newNumber) {
+function storeNumber(newNumber) {
     number.push(newNumber);
     console.log(number);
 }
 
-function storeOperator (newOperator) {
+function storeOperator(newOperator) {
     const operators = ["+", "-", "*", "/"]
     if (operation[-1] in operators === false && (number.length != 0 || operation.length != 0)) {
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
         console.log(operation);
+    }
+}
+
+function checkForMultDiv(operator) {
+    if (operator === "*") {
+        return true;
+    } else if (operator === "/") {
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -123,22 +133,42 @@ equals.addEventListener('click', () => {
     let b = null;
     let operator = null;
     let subOperation = [];
-    let subResult = null
+    let subResult = null;
 
     if (operation.length > 1 && number.length !== 0) {
         operation.push(Number(number.join("")));
         number = [];
-        for (let i = 0; i <= operation.length; i += 3){
-            subOperation = operation.slice(0, 2)
+        console.log(operation);
+        const amountOfMultDiv = operation.filter(checkForMultDiv);
+        let n = 0
+        while (n < amountOfMultDiv.length) {
+            n++;
+            console.log("ok")
+            const operatorIndex = operation.findIndex(checkForMultDiv);
+            console.log("index =" + operatorIndex);
+            operator = operation[operatorIndex];
+            console.log("mult operator =" + operator)
+            a = operation[operatorIndex - 1];
+            b = operation[operatorIndex + 1];
+            subResult = operate(a, operator, b);
+            console.log("(while)" + subResult);
+            operation.splice(operatorIndex - 1, 3, subResult);
+            console.log("(while)" + operation);
+        }
+        for (let i = 0; i < operation.length; i++){
+            subOperation = operation.slice(0, 3)
             a = subOperation[0];
             operator = subOperation[1];
             b = subOperation[2];
-            subResult = operate(a, operator,b);
-            operation.splice(0, 3);
-            operation.unshift(subResult);
+            console.log(a);
+            console.log(operator);
+            console.log(b);
+            subResult = operate(a, operator, b);
+            operation.splice(0, 3, subResult);
         }
         result = subResult;
         displayText.textContent = result;
+        result = [];
     } else if (operation.length > 2) {
         for (let i = 0; i <= operation.length; i += 3){
             subOperation = operation.slice(0, 2)
@@ -153,9 +183,6 @@ equals.addEventListener('click', () => {
         displayText.textContent = result;
     }
 
-    console.log(a);
-    console.log(b);
-    console.log(operator);
     console.log(result);
 
 
