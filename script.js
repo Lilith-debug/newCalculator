@@ -14,22 +14,24 @@ function divide(a,b) {
     return a / b;
 }
 
-function operate(a, operator, b) {
-    if (operator === "+") {
-        return add(a,b);
-    } else if (operator === "-") {
-        return substract(a,b);
-    } else if (operator === "*") {
-        return multiply(a,b);
-    } else if (operator === "/") {
-        return divide(a,b);
-    }
+function percent(a,b) {
+    return (a / 100) * b
 }
 
-let operation = [];
-let number = [];
-let result = null;
-const operatorList = ["+", "-", "*", "/"]
+function operate(a, operator, b) {
+    switch(operator) {
+        case "+":
+            return add(a,b);
+        case "-":
+            return substract(a,b);
+        case "*":
+            return multiply(a,b);
+        case "/":
+            return divide(a,b);
+        case "%":
+            return percent(a,b);
+    }
+}
 
 function storeNumber(newNumber) {
     if (result !== null) {
@@ -56,8 +58,8 @@ function storeOperator(newOperator) {
     }
 }
 
-function checkForMultDiv(operator) {
-    if (operator === "*" || operator === "/") {
+function isMultDivPer(thisOperator) {
+    if (thisOperator === "*" || thisOperator === "/" || thisOperator === "%") {
         return true;
     } else {
         return false;
@@ -70,11 +72,11 @@ function resolveOperation(operation) {
     let operator = null;
     let subResult = null;
 
-    const amountOfMultDiv = operation.filter(checkForMultDiv);
+    const amountOfMultDivPer = operation.filter(isMultDivPer);
     let n = 0
-    while (n < amountOfMultDiv.length) {
+    while (n < amountOfMultDivPer.length) {
         n++;
-        const operatorIndex = operation.findIndex(checkForMultDiv);
+        const operatorIndex = operation.findIndex(isMultDivPer);
         operator = operation[operatorIndex];
         a = operation[operatorIndex - 1];
         b = operation[operatorIndex + 1];
@@ -98,93 +100,109 @@ function resolveOperation(operation) {
     return Math.round(subResult * 100) / 100;
 }
 
+let operation = [];
+let number = [];
+let result = null;
+const operatorList = ["+", "-", "*", "/"]
+
 const displayText = document.querySelector("#displayText");
 
 const one = document.querySelector("#one");
-one.addEventListener('click', () => {
+one.addEventListener("click", () => {
     storeNumber("1");
 });
 
 const two = document.querySelector("#two");
-two.addEventListener('click', () => {
+two.addEventListener("click", () => {
     storeNumber("2");
 });
 
 const three = document.querySelector("#three");
-three.addEventListener('click', () => {
+three.addEventListener("click", () => {
     storeNumber("3");
 });
 
 const four = document.querySelector("#four");
-four.addEventListener('click', () => {
+four.addEventListener("click", () => {
     storeNumber("4");
 });
 
 const five = document.querySelector("#five");
-five.addEventListener('click', () => {
+five.addEventListener("click", () => {
     storeNumber("5");
 });
 
 const six = document.querySelector("#six");
-six.addEventListener('click', () => {
+six.addEventListener("click", () => {
     storeNumber("6");
 });
 
 const seven = document.querySelector("#seven");
-seven.addEventListener('click', () => {
+seven.addEventListener("click", () => {
     storeNumber("7");
 });
 
 const eight = document.querySelector("#eight");
-eight.addEventListener('click', () => {
+eight.addEventListener("click", () => {
     storeNumber("8");
 });
 
 const nine = document.querySelector("#nine");
-nine.addEventListener('click', () => {
+nine.addEventListener("click", () => {
     storeNumber("9");
 });
 
 const zero = document.querySelector("#zero");
-zero.addEventListener('click', () => {
+zero.addEventListener("click", () => {
     storeNumber("0");
 });
 
+const point = document.querySelector("#point");
+point.addEventListener("click", () => {
+    if (number.indexOf('.') === -1) {
+        number.push(".");
+    }
+    console.log(number);
+})
+
 const sum = document.querySelector("#add");
-sum.addEventListener('click', () => {
+sum.addEventListener("click", () => {
     storeOperator("+");
 });
 
 const substraction = document.querySelector("#substract");
-substraction.addEventListener('click', () => {
+substraction.addEventListener("click", () => {
     storeOperator("-");
 });
 
 const multiplication = document.querySelector("#multiply");
-multiplication.addEventListener('click', () => {
+multiplication.addEventListener("click", () => {
     storeOperator("*");
 });
 
 const division = document.querySelector("#divide");
-division.addEventListener('click', () => {
+division.addEventListener("click", () => {
     storeOperator("/");
 });
 
+const percentage = document.querySelector("#percentage");
+percentage.addEventListener("click", () => {
+    storeOperator("%")
+})
+
 const equals = document.querySelector("#equals");
-equals.addEventListener('click', () => {
+equals.addEventListener("click", () => {
     if (operation.length > 1 && number.length !== 0) {
         operation.push(Number(number.join("")));
         number = [];
         console.log(operation);
         result = resolveOperation(operation);     
-    } else if (operation[operation.length - 1] ===  "+" || operation[operation.length - 1] ===  "-" || operation[operation.length - 1] ===  "*" || operation[operation.length - 1] ===  "/" ) {
+    } else if (operation.length > 2 && operatorList.indexOf(operation[operation.length - 1]) !== -1) {
         operation.pop();
         console.log(operation);
-        if (operation.length > 1) {
         result = resolveOperation(operation);
-        } else {
-            result = operation;
-        }
+    } else if (operation.length === 2) {
+        operation[operation.length - 1] === "%" ? result = operation[0] / 100 : result = operation[0];
     } else {
         result = Number(number.join(""));
     }
@@ -194,23 +212,16 @@ equals.addEventListener('click', () => {
     console.log(result);
 });
 
-const point = document.querySelector("#point");
-point.addEventListener('click', () => {
-    if (number.indexOf('.') === -1) {
-        number.push(".");
-    }
-    console.log(number);
-})
-
 const backspace = document.querySelector("#backspace");
-backspace.addEventListener('click', () => {
+backspace.addEventListener("click", () => {
     number.length > 0 ? number.pop() : operation.pop();
     console.log(operation)
 });
 
 const clear = document.querySelector("#clear");
-clear.addEventListener('click', () => {
+clear.addEventListener("click", () => {
     operation = [];
     number = [];
     result = null;
 });
+
