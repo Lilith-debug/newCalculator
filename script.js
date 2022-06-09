@@ -37,21 +37,28 @@ function refreshDisplay() {
     console.log("number:" + number);
     console.log("operation:" + operation);
     if (number.length !== 0) {
+        //Add new numbers and floating points to display
         displayContent.push(number[number.length - 1]);
         if (operatorList.indexOf(displayContent[displayContent.length - 2]) === -1 && displayContent.length > 1) {
             const lastNumber = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
             displayContent.splice(displayContent.length - 2, 2, lastNumber);
         }
     } else if (number.length === 0 && operatorList.indexOf(displayContent[displayContent.length - 1]) !== -1){
+        //Replace current operator with new operator in display
         displayContent.pop();
         displayContent.push(operation[operation.length - 1]);
-    } else if (number.length === 0 && operation[operation.length - 1] === "%") {
+        if (operation[operation.length - 1] === "%") {
+            const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
+            displayContent.splice(displayContent.length - 2, 2, numberPercent);
+        }
+    } else if (number.length === 0) {
+        //Add new operators to display
         displayContent.push(operation[operation.length - 1]);
-        const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
-        displayContent.splice(displayContent.length - 2, 2, numberPercent);
-    }  else {
-        displayContent.push(operation[operation.length - 1]);
-    }
+        if (operation[operation.length - 1] === "%") {
+            const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
+            displayContent.splice(displayContent.length - 2, 2, numberPercent);
+        }
+    }  
 
     console.log(displayContent);
     displayText.textContent = displayContent.join(" ");
@@ -77,23 +84,18 @@ function storeOperator(newOperator) {
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
+        refreshDisplay();
     } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
-        if (newOperator !== "%") {
-            operation.pop();
-        }
-        
+        if (newOperator !== "%" || operation[operation.length - 1] !== "%") {
+        operation.pop();
         operation.push(newOperator);
+        refreshDisplay();
+        }
     }
-
-    refreshDisplay();
 }
 
 function isMultDivPer(thisOperator) {
-    if (thisOperator === "*" || thisOperator === "/" || thisOperator === "%") {
-        return true;
-    } else {
-        return false;
-    }
+    return thisOperator === "*" || thisOperator === "/" || thisOperator === "%"
 }
 
 function isPercentageAlone(thisOperator) {
