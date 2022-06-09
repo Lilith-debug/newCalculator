@@ -37,7 +37,7 @@ function refreshDisplay() {
     console.log("number:" + number);
     console.log("operation:" + operation);
     if (number.length !== 0) {
-        //Add new numbers and floating points to display
+        //Add new number or floating point to display
         displayContent.push(number[number.length - 1]);
         if (operatorList.indexOf(displayContent[displayContent.length - 2]) === -1 && displayContent.length > 1) {
             const lastNumber = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
@@ -52,7 +52,7 @@ function refreshDisplay() {
             displayContent.splice(displayContent.length - 2, 2, numberPercent);
         }
     } else if (number.length === 0) {
-        //Add new operators to display
+        //Add new operator to display
         displayContent.push(operation[operation.length - 1]);
         if (operation[operation.length - 1] === "%") {
             const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
@@ -81,11 +81,16 @@ function storeOperator(newOperator) {
     }
 
     if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
+        //Add new operator to operation
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
         refreshDisplay();
+    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1 && operation[operation.length - 1] === "%") { 
+        operation.push(newOperator);
+        refreshDisplay();
     } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
+        //Replace current operator in operation with new operator
         if (newOperator !== "%" || operation[operation.length - 1] !== "%") {
         operation.pop();
         operation.push(newOperator);
@@ -99,7 +104,16 @@ function isMultDivPer(thisOperator) {
 }
 
 function isPercentageAlone(thisOperator) {
-    return thisOperator === "%" && operatorList.indexOf(operation[thisOperator + 1]) !== -1
+    console.log(thisOperator)
+    console.log("ok");
+    if (operation[(operation.indexOf(thisOperator) + 1)] !== undefined) {
+    const z = operation[(operation.indexOf(thisOperator) + 1)];
+    console.log(z);
+        if (thisOperator === "%" && operatorList.indexOf(z) !== -1) {
+            console.log("doubleok");
+            return true;
+        }
+    }
 }
 function resolveOperation(operation) {
     let a = null;
@@ -109,13 +123,14 @@ function resolveOperation(operation) {
 
     if (operation.indexOf["%"] !== -1) {
         const amountOfPerAlone = operation.filter(isPercentageAlone);
+        console.log(amountOfPerAlone);
         let n = 0;
         while (n < amountOfPerAlone.length) {
             n++;
             console.log("ok");
             const percentageIndex = operation.findIndex(isPercentageAlone);
             subResult = operation[percentageIndex - 1] / 100;
-            operation.splice(operatorIndex - 1, 2, subResult);
+            operation.splice(percentageIndex - 1, 2, subResult);
             console.log(subResult);
         }
     }
