@@ -36,6 +36,7 @@ function operate(a, operator, b) {
 function refreshDisplay() {
     console.log("number:" + number);
     console.log("operation:" + operation);
+
     if (number.length !== 0) {
         //Add new number or floating point to display
         displayContent.push(number[number.length - 1]);
@@ -68,6 +69,7 @@ function storeNumber(newNumber) {
     if (result !== null) {
         operation = [];
         result = null;
+        displayContent = [];
     }
 
     number.push(newNumber);
@@ -76,17 +78,17 @@ function storeNumber(newNumber) {
 
 function storeOperator(newOperator) {
     if (result !== null) {
-        operation.push(newOperator);
         result = null;
-    }
-
-    if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
-        //Add new operator to operation
+        operation.push(newOperator);
+        refreshDisplay();
+    } else if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
+        //Add new operator to operation after a number
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
         refreshDisplay();
-    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1 && operation[operation.length - 1] === "%") { 
+    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1 && operation[operation.length - 1] === "%") {
+        //Add new operator to operation after percentage
         operation.push(newOperator);
         refreshDisplay();
     } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
@@ -104,16 +106,7 @@ function isMultDivPer(thisOperator) {
 }
 
 function isPercentageAlone(thisOperator) {
-    console.log(thisOperator)
-    console.log("ok");
-    if (operation[(operation.indexOf(thisOperator) + 1)] !== undefined) {
-    const z = operation[(operation.indexOf(thisOperator) + 1)];
-    console.log(z);
-        if (thisOperator === "%" && operatorList.indexOf(z) !== -1) {
-            console.log("doubleok");
-            return true;
-        }
-    }
+        return thisOperator === "%" && operatorList.indexOf(operation[(operation.indexOf(thisOperator) + 1)]) !== -1
 }
 function resolveOperation(operation) {
     let a = null;
@@ -122,6 +115,7 @@ function resolveOperation(operation) {
     let subResult = null;
 
     if (operation.indexOf["%"] !== -1) {
+        //Resolve percentages followed by another operator first
         const amountOfPerAlone = operation.filter(isPercentageAlone);
         console.log(amountOfPerAlone);
         let n = 0;
@@ -139,6 +133,7 @@ function resolveOperation(operation) {
 
     let n = 0;
     while (n < amountOfMultDivPer.length) {
+        //Then resolve multiplications, divisions and other percentages from left to right
         n++;
         const operatorIndex = operation.findIndex(isMultDivPer);
         operator = operation[operatorIndex];
@@ -153,6 +148,7 @@ function resolveOperation(operation) {
     }
 
     if (operation.length > 1) {
+        //Resolve sums and substractions at last from left to right
         for (let i = 0; i < operation.length; i++){
             a = operation[0];
             operator = operation[1];
@@ -273,7 +269,7 @@ equals.addEventListener("click", () => {
         result = Number(number.join(""));
     }
 
-    displayContent = result;
+    displayContent = [result];
     displayText.textContent = result;
     operation = [result];
     console.log(result);
@@ -292,6 +288,6 @@ clear.addEventListener("click", () => {
     number = [];
     result = null;
     displayContent = [];
-    refreshDisplay();
+    displayText.textContent = " ";
 });
 
