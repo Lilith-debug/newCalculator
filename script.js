@@ -52,6 +52,7 @@ function refreshDisplay() {
     }  else {
         displayContent.push(operation[operation.length - 1]);
     }
+
     console.log(displayContent);
     displayText.textContent = displayContent.join(" ");
 }
@@ -61,6 +62,7 @@ function storeNumber(newNumber) {
         operation = [];
         result = null;
     }
+
     number.push(newNumber);
     refreshDisplay();
 }
@@ -70,14 +72,19 @@ function storeOperator(newOperator) {
         operation.push(newOperator);
         result = null;
     }
+
     if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
     } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
-        operation.pop();
+        if (newOperator !== "%") {
+            operation.pop();
+        }
+        
         operation.push(newOperator);
     }
+
     refreshDisplay();
 }
 
@@ -89,14 +96,31 @@ function isMultDivPer(thisOperator) {
     }
 }
 
+function isPercentageAlone(thisOperator) {
+    return thisOperator === "%" && operatorList.indexOf(operation[thisOperator + 1]) !== -1
+}
 function resolveOperation(operation) {
     let a = null;
     let b = null;
     let operator = null;
     let subResult = null;
 
+    if (operation.indexOf["%"] !== -1) {
+        const amountOfPerAlone = operation.filter(isPercentageAlone);
+        let n = 0;
+        while (n < amountOfPerAlone.length) {
+            n++;
+            console.log("ok");
+            const percentageIndex = operation.findIndex(isPercentageAlone);
+            subResult = operation[percentageIndex - 1] / 100;
+            operation.splice(operatorIndex - 1, 2, subResult);
+            console.log(subResult);
+        }
+    }
+
     const amountOfMultDivPer = operation.filter(isMultDivPer);
-    let n = 0
+
+    let n = 0;
     while (n < amountOfMultDivPer.length) {
         n++;
         const operatorIndex = operation.findIndex(isMultDivPer);
@@ -120,6 +144,7 @@ function resolveOperation(operation) {
             operation.splice(0, 3, subResult);
         }
     }
+
     return Math.round(subResult * 100) / 100;
 }
 
@@ -185,8 +210,8 @@ const point = document.querySelector("#point");
 point.addEventListener("click", () => {
     if (number.indexOf('.') === -1) {
         number.push(".");
+        refreshDisplay();
     }
-    console.log(number);
 });
 
 const sum = document.querySelector("#add");
@@ -240,6 +265,8 @@ equals.addEventListener("click", () => {
 const backspace = document.querySelector("#backspace");
 backspace.addEventListener("click", () => {
     number.length > 0 ? number.pop() : operation.pop();
+    displayContent.pop();
+    refreshDisplay();
 });
 
 const clear = document.querySelector("#clear");
@@ -247,5 +274,7 @@ clear.addEventListener("click", () => {
     operation = [];
     number = [];
     result = null;
+    displayContent = [];
+    refreshDisplay();
 });
 
