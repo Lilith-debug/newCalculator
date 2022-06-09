@@ -33,13 +33,36 @@ function operate(a, operator, b) {
     }
 }
 
+function refreshDisplay() {
+    console.log("number:" + number);
+    console.log("operation:" + operation);
+    if (number.length !== 0) {
+        displayContent.push(number[number.length - 1]);
+        if (operatorList.indexOf(displayContent[displayContent.length - 2]) === -1 && displayContent.length > 1) {
+            const lastNumber = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
+            displayContent.splice(displayContent.length - 2, 2, lastNumber);
+        }
+    } else if (number.length === 0 && operatorList.indexOf(displayContent[displayContent.length - 1]) !== -1){
+        displayContent.pop();
+        displayContent.push(operation[operation.length - 1]);
+    } else if (number.length === 0 && operation[operation.length - 1] === "%") {
+        displayContent.push(operation[operation.length - 1]);
+        const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
+        displayContent.splice(displayContent.length - 2, 2, numberPercent);
+    }  else {
+        displayContent.push(operation[operation.length - 1]);
+    }
+    console.log(displayContent);
+    displayText.textContent = displayContent.join(" ");
+}
+
 function storeNumber(newNumber) {
     if (result !== null) {
         operation = [];
         result = null;
     }
     number.push(newNumber);
-    console.log(number);
+    refreshDisplay();
 }
 
 function storeOperator(newOperator) {
@@ -51,11 +74,11 @@ function storeOperator(newOperator) {
         operation.push(Number(number.join("")));
         operation.push(newOperator);
         number = [];
-        console.log(operation);
     } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
         operation.pop();
         operation.push(newOperator);
     }
+    refreshDisplay();
 }
 
 function isMultDivPer(thisOperator) {
@@ -103,7 +126,8 @@ function resolveOperation(operation) {
 let operation = [];
 let number = [];
 let result = null;
-const operatorList = ["+", "-", "*", "/"]
+let displayContent = [];
+const operatorList = ["+", "-", "*", "/", "%"]
 
 const displayText = document.querySelector("#displayText");
 
@@ -163,7 +187,7 @@ point.addEventListener("click", () => {
         number.push(".");
     }
     console.log(number);
-})
+});
 
 const sum = document.querySelector("#add");
 sum.addEventListener("click", () => {
@@ -187,8 +211,8 @@ division.addEventListener("click", () => {
 
 const percentage = document.querySelector("#percentage");
 percentage.addEventListener("click", () => {
-    storeOperator("%")
-})
+    storeOperator("%");
+});
 
 const equals = document.querySelector("#equals");
 equals.addEventListener("click", () => {
@@ -206,7 +230,8 @@ equals.addEventListener("click", () => {
     } else {
         result = Number(number.join(""));
     }
-    
+
+    displayContent = result;
     displayText.textContent = result;
     operation = [result];
     console.log(result);
@@ -215,7 +240,6 @@ equals.addEventListener("click", () => {
 const backspace = document.querySelector("#backspace");
 backspace.addEventListener("click", () => {
     number.length > 0 ? number.pop() : operation.pop();
-    console.log(operation)
 });
 
 const clear = document.querySelector("#clear");
