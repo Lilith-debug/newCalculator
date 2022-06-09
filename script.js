@@ -66,7 +66,7 @@ function refreshDisplay() {
 }
 
 function storeNumber(newNumber) {
-    if (result !== null) {
+    if (result !== null || result === "ERROR") {
         operation = [];
         result = null;
         displayContent = [];
@@ -78,9 +78,11 @@ function storeNumber(newNumber) {
 
 function storeOperator(newOperator) {
     if (result !== null) {
-        result = null;
-        operation.push(newOperator);
-        refreshDisplay();
+        if (result !== "ERROR") {
+            result = null;
+            operation.push(newOperator);
+            refreshDisplay();
+        }
     } else if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
         //Add new operator to operation after a number
         operation.push(Number(number.join("")));
