@@ -1,3 +1,4 @@
+//Functions
 function add(a,b) {
     return a + b;
 }
@@ -33,83 +34,14 @@ function operate(a, operator, b) {
     }
 }
 
-function refreshDisplay() {
-    console.log("number:" + number);
-    console.log("operation:" + operation);
-
-    if (number.length !== 0) {
-        //Add new number or floating point to display
-        displayContent.push(number[number.length - 1]);
-        if (operatorList.indexOf(displayContent[displayContent.length - 2]) === -1 && displayContent.length > 1) {
-            const lastNumber = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
-            displayContent.splice(displayContent.length - 2, 2, lastNumber);
-        }
-    } else if (number.length === 0 && operatorList.indexOf(displayContent[displayContent.length - 1]) !== -1){
-        //Replace current operator with new operator in display
-        displayContent.pop();
-        displayContent.push(operation[operation.length - 1]);
-        if (operation[operation.length - 1] === "%") {
-            const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
-            displayContent.splice(displayContent.length - 2, 2, numberPercent);
-        }
-    } else if (number.length === 0) {
-        //Add new operator to display
-        displayContent.push(operation[operation.length - 1]);
-        if (operation[operation.length - 1] === "%") {
-            const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
-            displayContent.splice(displayContent.length - 2, 2, numberPercent);
-        }
-    }  
-
-    console.log(displayContent);
-    displayText.textContent = displayContent.join(" ");
-}
-
-function storeNumber(newNumber) {
-    if (result !== null || result === "ERROR") {
-        operation = [];
-        result = null;
-        displayContent = [];
-    }
-
-    number.push(newNumber);
-    refreshDisplay();
-}
-
-function storeOperator(newOperator) {
-    if (result !== null) {
-        if (result !== "ERROR") {
-            result = null;
-            operation.push(newOperator);
-            refreshDisplay();
-        }
-    } else if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
-        //Add new operator to operation after a number
-        operation.push(Number(number.join("")));
-        operation.push(newOperator);
-        number = [];
-        refreshDisplay();
-    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1 && operation[operation.length - 1] === "%") {
-        //Add new operator to operation after percentage
-        operation.push(newOperator);
-        refreshDisplay();
-    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
-        //Replace current operator in operation with new operator
-        if (newOperator !== "%" || operation[operation.length - 1] !== "%") {
-        operation.pop();
-        operation.push(newOperator);
-        refreshDisplay();
-        }
-    }
-}
-
 function isMultDivPer(thisOperator) {
     return thisOperator === "*" || thisOperator === "/" || thisOperator === "%"
 }
 
 function isPercentageAlone(thisOperator) {
-        return thisOperator === "%" && operatorList.indexOf(operation[(operation.indexOf(thisOperator) + 1)]) !== -1
+    return thisOperator === "%" && operatorList.indexOf(operation[(operation.indexOf(thisOperator) + 1)]) !== -1
 }
+
 function resolveOperation(operation) {
     let a = null;
     let b = null;
@@ -163,12 +95,143 @@ function resolveOperation(operation) {
     return Math.round(subResult * 100) / 100;
 }
 
+function storeNumber(newNumber) {
+    if (result !== null || result === "ERROR") {
+        operation = [];
+        result = null;
+        displayContent = [];
+    }
+
+    number.push(newNumber);
+    refreshDisplay();
+}
+
+function storePoint() {
+    if (number.indexOf('.') === -1) {
+        number.push(".");
+        refreshDisplay();
+    }
+}
+
+function storeOperator(newOperator) {
+    if (result !== null) {
+        if (result !== "ERROR") {
+            result = null;
+            operation.push(newOperator);
+            refreshDisplay();
+        }
+    } else if (number.length !== 0 || operation.length !== 0 && operatorList.indexOf(operation[operation.length - 1]) === -1) {
+        //Add new operator to operation after a number
+        operation.push(Number(number.join("")));
+        operation.push(newOperator);
+        number = [];
+        refreshDisplay();
+    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1 && operation[operation.length - 1] === "%") {
+        //Add new operator to operation after percentage
+        operation.push(newOperator);
+        refreshDisplay();
+    } else if (operatorList.indexOf(operation[operation.length - 1]) !== -1) {
+        //Replace current operator in operation with new operator
+        if (newOperator !== "%" || operation[operation.length - 1] !== "%") {
+        operation.pop();
+        operation.push(newOperator);
+        refreshDisplay();
+        }
+    }
+}
+
+function equalsTo() {
+    if (operation.length > 1 && number.length !== 0) {
+        operation.push(Number(number.join("")));
+        number = [];
+        console.log(operation);
+        result = resolveOperation(operation);     
+    } else if (operation.length > 2 && operatorList.indexOf(operation[operation.length - 1]) !== -1) {
+        operation.pop();
+        console.log(operation);
+        result = resolveOperation(operation);
+    } else if (operation.length === 2) {
+        operation[operation.length - 1] === "%" ? result = operation[0] / 100 : result = operation[0];
+    } else {
+        result = Number(number.join(""));
+    }
+
+    displayContent = [result];
+    displayText.textContent = result;
+    operation = [result];
+    console.log(result);
+}
+
+function erase() {
+    number.length > 0 ? number.pop() : operation.pop();
+    displayContent.pop();
+    refreshDisplay();
+}
+
+function clearAll() {
+    operation = [];
+    number = [];
+    result = null;
+    displayContent = [];
+    refreshDisplay();
+}
+
+function pressKey(e) {
+    const key = e.key;
+    console.log(typeof(key));
+    if (!isNaN(key)) {
+        storeNumber(key);
+    } else if (key === ".") {
+        storePoint();
+    } else if (operatorList.indexOf(key) !== -1) {
+        storeOperator(key);
+    } else if (key === "Enter") {
+        equalsTo();
+    } else if (key === "Backspace") {
+        erase();
+    }
+}
+
+function refreshDisplay() {
+    console.log("number:" + number);
+    console.log("operation:" + operation);
+
+    if (number.length !== 0) {
+        //Add new number or floating point to display
+        displayContent.push(number[number.length - 1]);
+        if (operatorList.indexOf(displayContent[displayContent.length - 2]) === -1 && displayContent.length > 1) {
+            const lastNumber = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
+            displayContent.splice(displayContent.length - 2, 2, lastNumber);
+        }
+    } else if (number.length === 0 && operatorList.indexOf(displayContent[displayContent.length - 1]) !== -1){
+        //Replace current operator with new operator in display
+        displayContent.pop();
+        displayContent.push(operation[operation.length - 1]);
+        if (operation[operation.length - 1] === "%") {
+            const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
+            displayContent.splice(displayContent.length - 2, 2, numberPercent);
+        }
+    } else if (number.length === 0 && operation.length !== 0) {
+        //Add new operator to display
+        displayContent.push(operation[operation.length - 1]);
+        if (operation[operation.length - 1] === "%") {
+            const numberPercent = displayContent[displayContent.length - 2] + displayContent[displayContent.length - 1];
+            displayContent.splice(displayContent.length - 2, 2, numberPercent);
+        }
+    }  
+
+    console.log(displayContent);
+    displayText.textContent = displayContent.join(" ");
+}
+
+//Global variables
 let operation = [];
 let number = [];
 let result = null;
 let displayContent = [];
 const operatorList = ["+", "-", "*", "/", "%"]
 
+//Display, buttons and keys
 const displayText = document.querySelector("#displayText");
 
 const one = document.querySelector("#one");
@@ -223,10 +286,7 @@ zero.addEventListener("click", () => {
 
 const point = document.querySelector("#point");
 point.addEventListener("click", () => {
-    if (number.indexOf('.') === -1) {
-        number.push(".");
-        refreshDisplay();
-    }
+    storePoint();
 });
 
 const sum = document.querySelector("#add");
@@ -256,40 +316,19 @@ percentage.addEventListener("click", () => {
 
 const equals = document.querySelector("#equals");
 equals.addEventListener("click", () => {
-    if (operation.length > 1 && number.length !== 0) {
-        operation.push(Number(number.join("")));
-        number = [];
-        console.log(operation);
-        result = resolveOperation(operation);     
-    } else if (operation.length > 2 && operatorList.indexOf(operation[operation.length - 1]) !== -1) {
-        operation.pop();
-        console.log(operation);
-        result = resolveOperation(operation);
-    } else if (operation.length === 2) {
-        operation[operation.length - 1] === "%" ? result = operation[0] / 100 : result = operation[0];
-    } else {
-        result = Number(number.join(""));
-    }
-
-    displayContent = [result];
-    displayText.textContent = result;
-    operation = [result];
-    console.log(result);
+    equalsTo();
 });
 
 const backspace = document.querySelector("#backspace");
 backspace.addEventListener("click", () => {
-    number.length > 0 ? number.pop() : operation.pop();
-    displayContent.pop();
-    refreshDisplay();
+    erase();
 });
 
 const clear = document.querySelector("#clear");
 clear.addEventListener("click", () => {
-    operation = [];
-    number = [];
-    result = null;
-    displayContent = [];
-    displayText.textContent = " ";
+    clearAll();
 });
+
+window.addEventListener("keydown", pressKey);
+
 
