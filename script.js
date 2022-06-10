@@ -156,6 +156,7 @@ function equalsTo() {
         result = Number(number.join(""));
     }
 
+    number = [];
     displayContent = [result];
     displayText.textContent = result;
     operation = [result];
@@ -221,6 +222,7 @@ function refreshDisplay() {
     }  
 
     console.log(displayContent);
+    console.log(result);
     displayText.textContent = displayContent.join(" ");
 }
 
